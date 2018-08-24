@@ -33,10 +33,10 @@
         </activity>
 
         <!--mobtexting service recomanded to define in manifest-->
-        <!--<service-->
-            <!--android:name=".services.MobtextingServices"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="false"/>-->
+        <service
+            android:name="com.mobtexting.missedcallphoneverification.service.MobtextingServices"
+            android:enabled="true"
+            android:exported="false"/>
     </application>
 
 </manifest>
