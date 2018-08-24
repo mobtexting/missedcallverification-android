@@ -16,10 +16,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.mobtexting.missedcallphoneverification.model.ServerResponse;
+import com.mobtexting.missedcallphoneverification.receiver.MobtextingResultReceiver;
+import com.mobtexting.missedcallphoneverification.reposotories.VerificationInterface;
+import com.mobtexting.missedcallphoneverification.service.MobtextingServices;
 
 
-
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements VerificationInterface{
 
     private Button btn;
     private TextView testTv;
@@ -74,4 +77,26 @@ public class MainActivity extends AppCompatActivity{
         pd.show();
     }
 
+    @Override
+    public void onResponse(ServerResponse serverResponse) {
+
+    }
+
+    @Override
+    public void onError(ServerResponse serverResponse) {
+
+    }
+
+    @Override
+    public void missedCallReceived(boolean b, String s) {
+
+    }
+
+    /**
+     * for mobile verification to send data to mobtexing service for processing
+     */
+    private void verifyMobile() {
+        showProgressBar();
+//        MobtextingServices.sendDataToService(this, "99999", "123", new MobtextingResultReceiver.ResultReceiverCallBack(this) );
+    }
 }
