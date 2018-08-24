@@ -18,9 +18,7 @@
             <!--android:name="mobtexting.api_key"-->
             <!--android:value="@string/mobtextingapikey" />-->
 
-        <!--<meta-data-->
-            <!--android:name="mobtexting.missed_call_number"-->
-            <!--android:value="@string/mobtextingmissedcallnumber" />-->
+    
 
 
         <activity android:name=".MainActivity">
