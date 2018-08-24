@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MissedCallVerificationSDK</string>
+    <string name="mobtextingapikey">3123dsdasf12312312321</string>
+    <string name="mobtextingmissedcallnumber">123</string>
+</resources>
