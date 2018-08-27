@@ -18,9 +18,6 @@
             <!--android:name="mobtexting.api_key"-->
             <!--android:value="@string/mobtextingapikey" />-->
 
-
-
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

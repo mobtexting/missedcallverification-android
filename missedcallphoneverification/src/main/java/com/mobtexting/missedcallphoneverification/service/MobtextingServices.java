@@ -3,6 +3,8 @@ package com.mobtexting.missedcallphoneverification.service;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -30,6 +32,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MobtextingServices extends IntentService{
     private Retrofit retrofit;
+    private String api_key;
+    private int errCode;
 
     private Handler handler;
     private enum Actions {
@@ -76,64 +80,85 @@ public class MobtextingServices extends IntentService{
 
         if(missedcallNumber!=null && regMobileNumber!=null) {
 
-            final int code = MobtextingResultReceiver.RESULT_CODE_OK;
+            try {
+                ApplicationInfo ai = getBaseContext().getPackageManager().getApplicationInfo(getBaseContext().getPackageName(), PackageManager.GET_META_DATA);
+                Bundle apikeyBundle = ai.metaData;
+                api_key = apikeyBundle.getString("mobtexting.api_key");
+            } catch (Exception e) {
+                errCode = MobtextingResultReceiver.RESULT_CODE_ERROR;
+                bundle.putSerializable(MobtextingResultReceiver.PARAM_RESULT, new ServerResponse("Dear developer. Don't forget to configure <meta-data android:name=\"mobtexting.api_key\" android:value=\"testValue\"/> in your AndroidManifest.xml file.", false, 500));
+                if (resultReceiver != null) {
+                    resultReceiver.send(errCode, bundle);
+                }
+                return;
+            }
 
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-            httpClient.addInterceptor(logging);
-            retrofit = new Retrofit.Builder()
-                    .client(httpClient.build())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .baseUrl(MobtextingConfig.MOBTEXTING_SERVER_BASE_URL)
-                    .build();
+            if (api_key != null && !api_key.equals("")) {
+                final int code = MobtextingResultReceiver.RESULT_CODE_OK;
 
-            MobtextingServiceInterface service = retrofit.create(MobtextingServiceInterface.class);
+                HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+                logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+                OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+                httpClient.addInterceptor(logging);
+                retrofit = new Retrofit.Builder()
+                        .client(httpClient.build())
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .baseUrl(MobtextingConfig.MOBTEXTING_SERVER_BASE_URL)
+                        .build();
 
-            Call<ServerResponse> call = service.post("asdasdasdasdas", "click2call", missedcallNumber, regMobileNumber);
+                MobtextingServiceInterface service = retrofit.create(MobtextingServiceInterface.class);
 
-            call.enqueue(new Callback<ServerResponse>() {
-                @Override
-                public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                    try {
-                        if (response.isSuccessful()) {
-                            bundle.putSerializable(MobtextingResultReceiver.PARAM_RESULT, response.body());
+                Call<ServerResponse> call = service.post("asdasdasdasdas", "click2call", missedcallNumber, regMobileNumber);
+
+                call.enqueue(new Callback<ServerResponse>() {
+                    @Override
+                    public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
+                        try {
+                            if (response.isSuccessful()) {
+                                bundle.putSerializable(MobtextingResultReceiver.PARAM_RESULT, response.body());
+                                if (resultReceiver != null) {
+                                    resultReceiver.send(code, bundle);
+                                }
+                            } else {
+                                try {
+                                    Converter<ResponseBody, ServerResponse> errorConverter = retrofit.responseBodyConverter(ServerResponse.class, new Annotation[0]);
+                                    ServerResponse error = errorConverter.convert(response.errorBody());
+                                    bundle.putSerializable(MobtextingResultReceiver.PARAM_RESULT, error);
+                                    if (resultReceiver != null) {
+                                        resultReceiver.send(code, bundle);
+                                    }
+                                } catch (Exception e) {
+                                    bundle.putSerializable(MobtextingResultReceiver.PARAM_RESULT, new ServerResponse("Check your internet connection!/parsing Json exception", false, 500));
+                                    if (resultReceiver != null) {
+                                        resultReceiver.send(code, bundle);
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            bundle.putSerializable(MobtextingResultReceiver.PARAM_RESULT,
+                                    new ServerResponse("Something Went Wrong!", false, 501));
                             if (resultReceiver != null) {
                                 resultReceiver.send(code, bundle);
                             }
-                        } else {
-                            try {
-                                Converter<ResponseBody, ServerResponse> errorConverter = retrofit.responseBodyConverter(ServerResponse.class, new Annotation[0]);
-                                ServerResponse error = errorConverter.convert(response.errorBody());
-                                bundle.putSerializable(MobtextingResultReceiver.PARAM_RESULT, error);
-                                if (resultReceiver != null) {
-                                    resultReceiver.send(code, bundle);
-                                }
-                            } catch (Exception e) {
-                                bundle.putSerializable(MobtextingResultReceiver.PARAM_RESULT, new ServerResponse("Check your internet connection!/parsing Json exception", false, 500));
-                                if (resultReceiver != null) {
-                                    resultReceiver.send(code, bundle);
-                                }
-                            }
-                        }
-                    }catch (Exception e){
-                        bundle.putSerializable(MobtextingResultReceiver.PARAM_RESULT,
-                                new ServerResponse("Something Went Wrong!",false,501));
-                        if(resultReceiver!=null){
-                            resultReceiver.send(code,bundle);
-                        }
 
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<ServerResponse> call, Throwable t) {
-                    bundle.putSerializable(MobtextingResultReceiver.PARAM_RESULT, new ServerResponse("Check your internet connection!/parsing Json exception", false, 500));
-                    if (resultReceiver != null) {
-                        resultReceiver.send(code, bundle);
+                    @Override
+                    public void onFailure(Call<ServerResponse> call, Throwable t) {
+                        bundle.putSerializable(MobtextingResultReceiver.PARAM_RESULT, new ServerResponse("Check your internet connection!/parsing Json exception", false, 500));
+                        if (resultReceiver != null) {
+                            resultReceiver.send(code, bundle);
+                        }
                     }
+                });
+            }else{
+                errCode = MobtextingResultReceiver.RESULT_CODE_ERROR;
+                bundle.putSerializable(MobtextingResultReceiver.PARAM_RESULT, new ServerResponse("Dear developer. Don't forget to configure <meta-data android:name=\"mobtexting.api_key\" android:value=\"testValue\"/> in your AndroidManifest.xml file.", false, 500));
+                if (resultReceiver != null) {
+                    resultReceiver.send(errCode, bundle);
                 }
-            });
+            }
         }else{
             final int code = MobtextingResultReceiver.RESULT_CODE_ERROR;
             bundle.putSerializable(MobtextingResultReceiver.PARAM_EXCEPTION, new ServerResponse("provide misscall number and registered mobile number", false, 201));
