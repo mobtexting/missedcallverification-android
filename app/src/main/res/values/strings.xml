@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">MissedCallVerificationSDK</string>
-    <string name="mobtextingapikey"></string>
+    <!--fixed ur API-KEY -->
+    <string name="mobtextingapikey">apikey1239924798124</string>
+    fixed mis
     <string name="mobtextingmissedcallnumber">123</string>
 </resources>
