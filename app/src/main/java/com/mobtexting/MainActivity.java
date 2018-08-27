@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.mobtexting.missedcallphoneverification.model.ServerResponse;
 import com.mobtexting.missedcallphoneverification.receiver.MissedCallReceiver;
-import com.mobtexting.missedcallphoneverification.receiver.MobtextingResultReceiver;
 import com.mobtexting.missedcallphoneverification.reposotories.MobtextingInfoResult;
 import com.mobtexting.missedcallphoneverification.reposotories.VerificationInterface;
 import com.mobtexting.missedcallphoneverification.service.MobtextingServices;
@@ -67,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements VerificationInter
 
     @Override
     protected void onDestroy() {
+        //recomanded to unregister the receiver
         unRegisterReceiver();
         super.onDestroy();
     }
@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements VerificationInter
         pd.show();
     }
 
+    //server success response from mobtexting
     @Override
     public void onResponse(ServerResponse serverResponse) {
         pd.dismiss();
@@ -97,12 +98,14 @@ public class MainActivity extends AppCompatActivity implements VerificationInter
         }
     }
 
+    //server response from mobtexting when any error occurs
     @Override
     public void onError(ServerResponse serverResponse) {
         pd.dismiss();
         testTv.append(serverResponse.getMessage()+"  "+serverResponse.getResponseCode()+" \n");
     }
 
+    //dial a number from activity and call back with dialed number
     @Override
     public void missedCallReceived(boolean b, String s) {
         testTv.setText(s);
