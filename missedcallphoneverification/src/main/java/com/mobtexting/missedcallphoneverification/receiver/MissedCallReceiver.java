@@ -12,7 +12,7 @@ import java.util.Date;
  * Missedcall receiver for OutgoingCallStarted and OutgoingCallEnd event
  */
 public class MissedCallReceiver extends PhonecallReceiver {
-    public static String TAG = "TestReceiver";
+    public static String TAG = "MissedcallReceiver";
     private static VerificationInterface missCallListener;
 
     public MissedCallReceiver(VerificationInterface missCallListener) {

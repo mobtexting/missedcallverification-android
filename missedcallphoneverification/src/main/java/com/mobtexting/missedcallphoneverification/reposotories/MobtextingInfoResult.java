@@ -9,9 +9,10 @@ import com.mobtexting.missedcallphoneverification.receiver.MobtextingResultRecei
 public class MobtextingInfoResult implements MobtextingResultReceiver.ResultReceiverCallBack {
     private VerificationInterface verificationInterface;
 
-    public MobtextingInfoResult(VerificationInterface verificationInterface){
-        this.verificationInterface= verificationInterface;
+    public MobtextingInfoResult(VerificationInterface verificationInterface) {
+        this.verificationInterface = verificationInterface;
     }
+
     @Override
     public void onSuccess(ServerResponse data) {
         verificationInterface.onResponse(data);
