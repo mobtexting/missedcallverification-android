@@ -108,7 +108,7 @@ public class MobtextingServices extends IntentService{
 
                 MobtextingServiceInterface service = retrofit.create(MobtextingServiceInterface.class);
 
-                Call<ServerResponse> call = service.post("asdasdasdasdas", "click2call", missedcallNumber, regMobileNumber);
+                Call<ServerResponse> call = service.post(api_key, "missedcall", missedcallNumber, regMobileNumber);
 
                 call.enqueue(new Callback<ServerResponse>() {
                     @Override

@@ -14,9 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--<meta-data-->
-            <!--android:name="mobtexting.api_key"-->
-            <!--android:value="@string/mobtextingapikey" />-->
+        <meta-data
+            android:name="mobtexting.api_key"
+            android:value="@string/mobtextingapikey" />
 
         <activity android:name=".MainActivity">
             <intent-filter>

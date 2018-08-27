@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements VerificationInter
 
     @Override
     protected void onDestroy() {
+        unRegisterReceiver();
         super.onDestroy();
     }
 
