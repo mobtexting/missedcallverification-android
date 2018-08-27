@@ -1,5 +1,6 @@
 package com.mobtexting.missedcallphoneverification.reposotories;
 
+import com.mobtexting.missedcallphoneverification.config.MobtextingConfig;
 import com.mobtexting.missedcallphoneverification.model.ServerResponse;
 
 import retrofit2.Call;
@@ -9,8 +10,7 @@ import retrofit2.http.POST;
 
 public interface MobtextingServiceInterface {
     @FormUrlEncoded
-//    @POST(MobtextingConfig.verifyUrl)
-    @POST("/api.v1/json/")
+    @POST(MobtextingConfig.verifyUrl)
     Call<ServerResponse> post(
             @Field("api_key") String api_key,
             @Field("method") String method,

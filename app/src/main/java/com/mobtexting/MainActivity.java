@@ -17,7 +17,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.mobtexting.missedcallphoneverification.model.ServerResponse;
+import com.mobtexting.missedcallphoneverification.receiver.MissedCallReceiver;
 import com.mobtexting.missedcallphoneverification.receiver.MobtextingResultReceiver;
+import com.mobtexting.missedcallphoneverification.reposotories.MobtextingInfoResult;
 import com.mobtexting.missedcallphoneverification.reposotories.VerificationInterface;
 import com.mobtexting.missedcallphoneverification.service.MobtextingServices;
 
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements VerificationInter
     private Button btn;
     private TextView testTv;
     private ProgressDialog pd;
+    private MissedCallReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +43,16 @@ public class MainActivity extends AppCompatActivity implements VerificationInter
             @Override
             public void onClick(View view) {
                 testTv.setText("");
+                registerReceiver();
                 performDial("123");
             }
         });
     }
 
+    /**
+     * perform dial to particular number
+     * @param numberString
+     */
     private void performDial(String numberString) {
         if (!numberString.equals("")) {
             Uri number = Uri.parse("tel:" + numberString);
@@ -79,24 +87,62 @@ public class MainActivity extends AppCompatActivity implements VerificationInter
 
     @Override
     public void onResponse(ServerResponse serverResponse) {
+        pd.dismiss();
+        testTv.append(serverResponse.getMessage()+"  "+serverResponse.getResponseCode()+" \n");
+        if(serverResponse.getResponseCode()==718){
 
+            finish();
+            startActivity(new Intent(getBaseContext(),VerifyActivity.class));
+        }
     }
 
     @Override
     public void onError(ServerResponse serverResponse) {
-
+        pd.dismiss();
+        testTv.append(serverResponse.getMessage()+"  "+serverResponse.getResponseCode()+" \n");
     }
 
     @Override
     public void missedCallReceived(boolean b, String s) {
-
+        testTv.setText(s);
+        if (b) {
+            verifyMobile();
+        } else {
+            unRegisterReceiver();
+        }
     }
+
+
 
     /**
      * for mobile verification to send data to mobtexing service for processing
      */
     private void verifyMobile() {
         showProgressBar();
-//        MobtextingServices.sendDataToService(this, "99999", "123", new MobtextingResultReceiver.ResultReceiverCallBack(this) );
+        MobtextingServices.sendDataToService(this, "99999", "123", new MobtextingInfoResult(this));
+    }
+
+    /**
+     * recomanded to unregister the receiver
+     */
+    private void unRegisterReceiver() {
+        if (receiver != null) {
+            Log.d("activity", "broadcast receiver unregistered");
+            MainActivity.this.unregisterReceiver(receiver);
+            receiver = null;
+        } else {
+            Log.d("activity", "broadcast receiver not unregistered");
+        }
+    }
+
+    /**
+     * register receiver for outgoing call and phone state
+     */
+    private void registerReceiver() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.intent.action.PHONE_STATE");
+        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
+        receiver = new MissedCallReceiver(this);
+        registerReceiver(receiver, intentFilter);
     }
 }
