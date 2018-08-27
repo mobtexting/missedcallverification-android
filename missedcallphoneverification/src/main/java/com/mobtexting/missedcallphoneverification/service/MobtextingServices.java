@@ -154,7 +154,8 @@ public class MobtextingServices extends IntentService{
                 });
             }else{
                 errCode = MobtextingResultReceiver.RESULT_CODE_ERROR;
-                bundle.putSerializable(MobtextingResultReceiver.PARAM_EXCEPTION, new ServerResponse("Dear developer. Don't forget to configure <meta-data android:name=\"mobtexting.api_key\" android:value=\"testValue\"/> in your AndroidManifest.xml file.", false, 500));
+                bundle.putSerializable(MobtextingResultReceiver.PARAM_EXCEPTION, new ServerResponse("Dear developer. Don't forget to configure <meta-data android:name=\"mobtexting.api_key\" android:value=\"testValue\"/> in your AndroidManifest.xml file or api " +
+                        "key can not be empty.", false, 500));
                 if (resultReceiver != null) {
                     resultReceiver.send(errCode, bundle);
                 }

@@ -32,5 +32,5 @@ dependencies {
 //    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
 //    implementation 'com.squareup:otto:1.3.8'
 
-    implementation 'com.github.mobtexting:missedcallverification-android:74933d2bb1'
+    implementation 'com.github.mobtexting:missedcallverification-android:71bb8c8c7d'
 }
