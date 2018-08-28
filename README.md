@@ -21,7 +21,7 @@ dependencies {
   <meta-data android:name="mobtexting.api_key" android:value="@string/mobtextingapikey" />
 ```
 #### Usage (How to verify phone number using missed call)
-**Step 1.**
+**Step 3.**
 implement VerificationInterface in Activity or fragment and implement the methods.
 ```java
 public class MainActivity extends AppCompatActivity implements VerificationInterface{
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements VerificationInter
     }
  }
  ```
- **Step 2.**
+ **Step 4.**
  recomanded to register the receiver and initiate the call from dialer
  ```java
  btnVerify.setOnClickListener(new View.OnClickListener() {
@@ -96,7 +96,7 @@ private void registerReceiver() {
   registerReceiver(receiver, intentFilter);
 }
 ```
- **Step 3.**
+ **Step 5.**
  recomanded to unregister the receiver
  ```java
  @Override
@@ -119,7 +119,7 @@ private void unRegisterReceiver() {
     }
 }
  ```
- **Step 4.**
+ **Step 6.**
  after performing a dial, it will invoked inside missedCallReceived override method (after missedcall automatially will disconnect)
 ```java
 //dial a number from activity and call back with dialed number
@@ -131,5 +131,16 @@ public void missedCallReceived(boolean b, String s) {
   } else {
     unRegisterReceiver();
   }
+}
+
+// we will get server response from mobtexting
+@Override
+public void onResponse(ServerResponse serverResponse) {
+  //do whatever you want        
+}
+    
+@Override
+public void onError(ServerResponse serverResponse) {
+  //do whatever you want      
 }
 ```
