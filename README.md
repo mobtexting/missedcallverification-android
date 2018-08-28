@@ -13,7 +13,7 @@ allprojects {
 **Step 2.** Add the dependency
 ```java
 dependencies {
-  implementation 'com.github.mobtexting:missedcallverification-android:-SNAPSHOT'
+  implementation 'com.github.mobtexting:missedcallverification-android:v1.0.0'
 }
 ```
 #### Define _API KEY_ in Manifest file inside Application tag
